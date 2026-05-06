@@ -28,5 +28,8 @@
   },
   "optionalDependencies": {
     "canvas": "^3.0.1"
+  },
+  "overrides": {
+    "gradient-string": "2.0.0"
   }
 }
