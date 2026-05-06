@@ -1,0 +1,23 @@
+# Railway Nixpacks Configuration
+  [phases.setup]
+  aptPkgs = [
+    "libcairo2-dev",
+    "libpango1.0-dev",
+    "libjpeg-dev",
+    "libgif-dev",
+    "librsvg2-dev",
+    "libpng-dev",
+    "build-essential",
+    "g++",
+    "python3",
+    "make",
+    "uuid-runtime",
+    "libssl-dev"
+  ]
+
+  [phases.install]
+  cmds = ["npm ci --include=dev"]
+
+  [start]
+  cmd = "node src/index.js"
+  
