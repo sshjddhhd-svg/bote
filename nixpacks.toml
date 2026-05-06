@@ -1,5 +1,4 @@
-# Railway Nixpacks Configuration
-  [phases.setup]
+[phases.setup]
   aptPkgs = [
     "libcairo2-dev",
     "libpango1.0-dev",
@@ -16,7 +15,7 @@
   ]
 
   [phases.install]
-  cmds = ["npm ci --include=dev"]
+  cmds = ["npm install"]
 
   [start]
   cmd = "node src/index.js"
