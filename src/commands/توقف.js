@@ -1,19 +1,16 @@
 "use strict";
   /**
-   * /توقف ياعبد — إيقاف الإرسال التلقائي
+   * /توقف — إيقاف الإرسال التلقائي
    */
   module.exports = {
     config: {
       name: "توقف",
       aliases: [],
       description: "إيقاف الإرسال التلقائي",
-      usage: "توقف ياعبد",
+      usage: "توقف",
       adminOnly: false,
     },
-    async run({ api, args, threadID }) {
-      if (!args.length || args[0] !== "ياعبد") {
-        return api.sendMessage("❌ الأمر الصحيح: /توقف ياعبد", threadID);
-      }
+    async run({ api, threadID }) {
       if (!global._autoSendTimers || !global._autoSendTimers.has(threadID)) {
         return api.sendMessage("⚠️ لا يوجد إرسال تلقائي نشط في هذه المحادثة.", threadID);
       }
