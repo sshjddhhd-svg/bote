@@ -1,9 +1,14 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const path = require("path");
+const fs   = require("fs");
+
+// إنشاء مجلد data/ إذا لم يكن موجوداً
+const DATA_DIR = path.join(__dirname, "../../data");
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
-  storage: path.join(__dirname, "../../data/bot.db"),
+  storage: path.join(DATA_DIR, "bot.db"),
   logging: false,
 });
 
