@@ -69,6 +69,21 @@ function logEvent(type, threadName) {
   console.log(`${chalk.gray(ts())} ${chalk.yellow("⚡")} ${chalk.yellow(type)} @ ${chalk.cyan(threadName)}`);
 }
 
+// ─── Human Typing Keeper ────────────────────────────────────────────
+// يُرسل typing indicator ويجدده كل 3 ثوانٍ طوال مدة الكتابة — يجعل البوت يبدو كالبشر بدلاً من إرسالة واحدة فقط
+function keepTyping(api, threadID, durationMs) {
+  return new Promise(resolve => {
+    let active = true;
+    const sendInd = () => {
+      if (!active) return;
+      try { api.sendTypingIndicator(threadID, () => {}); } catch (_) {}
+    };
+    sendInd(); // إرسال فوري
+    const iv = setInterval(sendInd, 3000); // تجديد كل 3 ثوانٍ
+    setTimeout(() => { active = false; clearInterval(iv); resolve(); }, durationMs);
+  });
+}
+
 // ─── Main Handler ─────────────────────────────────────────────────────────────
 module.exports = async function handlerEvents(api, event, commands) {
   if (!event) return;
@@ -144,11 +159,12 @@ module.exports = async function handlerEvents(api, event, commands) {
 
     // Run command
     try {
-      // Human typing simulation
+      // Human typing simulation — keepTyping يجدد المؤشر كل 3 ثوانِ
       if (config.humanTyping?.enable !== false) {
-        try { api.sendTypingIndicator(threadID); } catch (_) {}
-        const typingMs = Math.min(Math.max((typeof cmd.config.reply === "string" ? cmd.config.reply.length : 60) * 30, 400), 5000);
-        await new Promise(r => setTimeout(r, typingMs * (0.8 + Math.random() * 0.4)));
+        const replyLen = typeof cmd.config.reply === "string" ? cmd.config.reply.length : 120;
+        const baseMs   = Math.min(Math.max(replyLen * 22, 900), 5000);
+        const typingMs = Math.floor(baseMs * (0.8 + Math.random() * 0.4));
+        await keepTyping(api, threadID, typingMs);
       }
 
       await cmd.run({
@@ -160,9 +176,10 @@ module.exports = async function handlerEvents(api, event, commands) {
         commands,
         simulateTyping: async (text) => {
           if (config.humanTyping?.enable === false) return;
-          try { api.sendTypingIndicator(threadID); } catch (_) {}
-          const ms = Math.min(Math.max(String(text||"").length * 30, 400), 6000);
-          await new Promise(r => setTimeout(r, ms * (0.8 + Math.random() * 0.4)));
+          const baseMs = Math.min(Math.max(String(text || "").length * 22, 900), 6000);
+          const ms     = Math.floor(baseMs * (0.8 + Math.random() * 0.4));
+          await keepTyping(api, threadID, ms);
+        },
         },
       });
     } catch (e) {
