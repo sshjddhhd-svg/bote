@@ -371,9 +371,6 @@ function printBanner() {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 async function main() {
   printBanner();
-  await initDB();
-  log.ok("قاعدة البيانات جاهزة");
-
   const defaults = {
     botName: "jarfis", prefix: "/", ownerID: "", adminIDs: [],
     dashboardPort: 5000, timezone: "Africa/Algiers",
@@ -408,11 +405,21 @@ async function main() {
   global.commands = commands;
   log.ok(`تم تحميل ${chalk.bold(commands.size)} أمر`);
 
+  // إنشاء مجلد data/ إذا لم يكن موجوداً
+  fs.ensureDirSync(path.join(__dirname, "../data"));
   if (!fs.existsSync(ACCOUNT_PATH)) fs.writeFileSync(ACCOUNT_PATH, "", "utf8");
 
   const port = parseInt(process.env.PORT || config.dashboardPort || 5000, 10);
   await startDashboard(port);
   log.ok(`لوحة التحكم → http://0.0.0.0:${port}`);
+
+  // ── تهيئة قاعدة البيانات بعد الداشبورد (لا تمنع إقلاع الموقع) ────────
+  try {
+    await initDB();
+    log.ok("قاعدة البيانات جاهزة");
+  } catch (e) {
+    log.error(`قاعدة البيانات: ${e.message} — سيعمل بدونها`);
+  }
 
   // ── File Watcher: تغيير account.txt → hot-swap ────────────────────────────
   let _watchMtime  = 0;
