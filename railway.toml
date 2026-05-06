@@ -1,10 +1,9 @@
 [build]
-  builder = "nixpacks"
+builder = "nixpacks"
 
-  [deploy]
-  startCommand = "node src/index.js"
-  healthcheckPath = "/api/ping"
-  healthcheckTimeout = 300
-  restartPolicyType = "always"
-  restartPolicyMaxRetries = 5
-  
+[deploy]
+startCommand = "node src/index.js"
+healthcheckPath = "/api/ping"
+healthcheckTimeout = 300
+restartPolicyType = "always"
+restartPolicyMaxRetries = 5
